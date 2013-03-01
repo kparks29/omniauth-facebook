@@ -60,7 +60,7 @@ module OmniAuth
       def build_access_token
         if access_token = request.params["access_token"]
           ::OAuth2::AccessToken.from_hash(
-            client, 
+            client,
             {"access_token" => access_token}.update(access_token_options)
           )
         elsif signed_request_contains_access_token?
@@ -121,15 +121,7 @@ module OmniAuth
       #
       def authorize_params
         super.tap do |params|
-          %w[display state scope auth_type].each do |v|
-            if request.params[v]
-              params[v.to_sym] = request.params[v]
-
-              # to support omniauth-oauth2's auto csrf protection
-              session['omniauth.state'] = params[:state] if v == 'state'
-            end
-          end
-
+          %w[display state scope auth_type].each { |v| params[v.to_sym] = request.params[v] if request.params[v] }
           params[:scope] ||= DEFAULT_SCOPE
         end
       end
